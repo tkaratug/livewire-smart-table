@@ -1,0 +1,55 @@
+{
+    "name": "tkaratug/livewire-smart-table",
+    "description": "An advanced datatable component for Laravel Livewire",
+    "keywords": [
+        "tkaratug",
+        "livewire-smart-table"
+    ],
+    "homepage": "https://github.com/tkaratug/livewire-smart-table",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Turan Karatuğ",
+            "email": "tkaratug@hotmail.com.tr",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.1",
+        "illuminate/support": "^6.0|^7.0",
+        "livewire/livewire": "^1.1"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^5.0",
+        "phpunit/phpunit": "^9.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tkaratug\\LivewireSmartTable\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tkaratug\\LivewireSmartTable\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Tkaratug\\LivewireSmartTable\\LivewireSmartTableServiceProvider"
+            ],
+            "aliases": {
+                "LivewireSmartTable": "Tkaratug\\LivewireSmartTable\\LivewireSmartTableFacade"
+            }
+        }
+    }
+}
