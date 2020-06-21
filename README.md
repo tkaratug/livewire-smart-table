@@ -1,6 +1,8 @@
 # Livewire Smart Table
 An advanced, dynamic datatable component with pagination, sorting, and searching including json data.
 
+![Livewire Smart Table Demo](demo/livewire-smart-table.gif)
+
 ## Installation
 
 You can install the package via composer:
