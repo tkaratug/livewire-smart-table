@@ -13,7 +13,7 @@
         </div>
 
         <div class="col">
-            <input wire:model="search" type="text" class="form-control" placeholder="Search...">
+            <input wire:model.debounce:500ms="search" type="text" class="form-control" placeholder="Search...">
         </div>
     </div>
 
@@ -23,15 +23,21 @@
                 <tr>
                     @foreach ($columns as $column => $props)
                     <th>
-                        @if (isset($props['from']))
-                            <a wire:click.prevent="sortBy('{{ $props['from'] }}->{{ $column }}')" role="button" href="#">
+                        @if ($props['type'] !== 'actions')
+                        <a wire:click.prevent="sortBy('{{ $column }}')" role="button" href="#">
+                            @if (isset($props['name']))
+                                {{ $props['name'] }}
+                            @else
                                 {{ $column }}
-                            </a>
+                            @endif
+                        </a>
+                        @include('livewire-smart-table::sort-icon', ['field' => $column])
                         @else
-                            <a wire:click.prevent="sortBy('{{ $props }}')" role="button" href="#">
-                                {{ $props }}
-                            </a>
-                            @include('livewire-smart-table::sort-icon', ['field' => $props])
+                            @if (isset($props['name']))
+                                {{ $props['name'] }}
+                            @else
+                                {{ $column }}
+                            @endif
                         @endif
                     </th>
                     @endforeach
@@ -41,10 +47,20 @@
                 @foreach ($data as $item)
                 <tr>
                     @foreach ($columns as $column => $props)
-                        @if (isset($props['from']))
-                            <td>{{ json_decode($item[$props['from']])->{$column} }}</td>
+                        @if ($props['type'] === 'link')
+                        <td class="{{ $props['class'] ?? '' }}">
+                            <a href="{{ $item->{$column.'_url'} }}" target="{{ $props['target'] ?? '_blank' }}">
+                                {!! $item->{$column} !!}
+                            </a>
+                        </td>
+                        @elseif ($props['type'] === 'actions')
+                        <td class="{{ $props['class'] ?? '' }}">
+                            @foreach ($item->{$column} as $option)
+                            <a href="{{ $option['url'] }}">{!! $option['element'] !!}</a>
+                            @endforeach
+                        </td>
                         @else
-                            <td>{{ $item[$props] }}</td>
+                        <td class="{{ $props['class'] ?? '' }}">{!! $item->{$column} !!}</td>
                         @endif
                     @endforeach
                 </tr>

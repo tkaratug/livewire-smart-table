@@ -25,12 +25,46 @@ You can use make:livewire to create a new component. For example.
 php artisan make:livewire UserList
 ```
 
-In the UserList class, instead of extending from the base Livewire Component class, extend from LivewireSmartTable class. Also, remove the render method. You'll have a class similar to this snippet.
+In the UserList class, instead of extending from the base Livewire Component class, extend from LivewireSmartTable class. Also, remove the render method. You'll have a class similar to this snippet. You must give columns to view in the table.
 
 ```php
 class UserList extends LivewireSmartTable
 {
-    //
+    $columns = [
+        'id' => [
+            'name' => 'Id',
+            'type' => 'string',
+            'class' => 'text-danger',
+        ],
+        'name' => [
+            'name' => 'Name',
+            'type' => 'string',
+        ],
+        'email' => [
+            'name' => 'E-Mail',
+            'type' => 'string',
+        ],
+        'city' => [
+            'name' => 'City',
+            'type' => 'json',
+            'from' => 'address',
+            'value' => 'city',
+        ],
+        'actions' => [
+            'name' => 'Actions',
+            'type' => 'actions',
+            'actions' => [
+                [
+                    'element' => '<button class="btn btn-sm btn-primary">View</button>',
+                    'url' => 'http://example.com/users/{id}/details',
+                ],
+                [
+                    'element' => '<button class="btn btn-sm btn-warning">Edit</button>',
+                    'url' => 'http://example.com/users/{id}/edit',
+                ],
+            ],
+        ],
+    ];
 }
 ```
 
@@ -39,22 +73,27 @@ To render the component in a view, just use the Livewire tag or include syntax
 ```blade
 <livewire:user-list
    :query="$query" // required
-   :columns="$columns" // required
    table-class="class for the table" // optional
 />
 ```
 
-### Testing
+## Column Properties
+### ```string```
+Document will be added.
+### ```link```
+Document will be added.
+### ```json```
+Document will be added.
+### ```actions```
+Document will be added.
+
+## Testing
 
 ```bash
 composer test
 ```
 
-### Changelog
-
-- Initial release
-
-### Security
+## Security
 
 If you discover any security related issues, please email tkaratug@hotmail.com.tr instead of using the issue tracker.
 

@@ -27,13 +27,17 @@ class LivewireSmartTable extends Component
 
     public $tableClass;
 
+    public $sortIcon = '&#8597;';
+
+    public $sortAscIcon = '&#8593;';
+
+    public $sortDescIcon = '&#8595;';
+
     public function mount(
         Collection $query,
-        array $columns = [],
         string $tableClass = 'table')
     {
         $this->query = $query;
-        $this->columns = $columns;
         $this->tableClass = $tableClass;
         $this->page = request()->query('page', $this->page);
     }
@@ -60,20 +64,15 @@ class LivewireSmartTable extends Component
      */
     public function render()
     {
-        $items = $this->query;
+        $items = $this->prepareData($this->query);
 
         // If user search something, filter items by input
         if (!empty($this->search)) {
             $items = $this->query->filter(function ($item) {
                 $found = false;
                 foreach ($this->columns as $column => $props) {
-                    // if column is a property of a json data then sort by the key
-                    if (isset($props['from'])) {
-                        if (stripos(json_decode($item->{$props['from']})->{$column}, $this->search) !== false) {
-                            $found = true;
-                        }
-                    } else {
-                        if (stripos($item->{$props}, $this->search) !== false) {
+                    if ($props['type'] !== 'actions') {
+                        if (stripos($item->{$column}, $this->search) !== false) {
                             $found = true;
                         }
                     }
@@ -83,22 +82,9 @@ class LivewireSmartTable extends Component
         }
 
         // If the field that wanted to be sorted is from a json data
-        if (strpos($this->sortField, '->') !== false) {
-            $field = explode('->', $this->sortField);
-            if ($this->sortAsc) {
-                $data =$items->sortBy(function ($item) use ($field) {
-                    return json_decode($item->{$field[0]})->{$field[1]};
-                });
-            } else {
-                $data = $items->sortByDesc(function ($item) use ($field) {
-                    return json_decode($item->{$field[0]})->{$field[1]};
-                });
-            }
-        } else {
-            $data = $this->sortAsc
-                ? $items->sortBy($this->sortField)
-                : $items->sortByDesc($this->sortField);
-        }
+        $data = $this->sortAsc
+            ? $items->sortBy($this->sortField)
+            : $items->sortByDesc($this->sortField);
 
         // Paginate the results
         $data = new LengthAwarePaginator(
@@ -113,5 +99,64 @@ class LivewireSmartTable extends Component
             'data' => $data,
             'columns' => $this->columns,
         ]);
+    }
+
+    /**
+     * Prepare data by columns
+     * 
+     * @param Collection $query
+     * @return Collection
+     */
+    private function prepareData(Collection $query)
+    {
+        foreach ($query as $item) {
+            foreach ($this->columns as $key => $props) {
+                if (isset($props['type'])) {
+                    switch ($props['type']) {
+                        case 'json':
+                            $from = json_decode($item->{$props['from']});
+                            $nastedFields = explode('.', $props['value']);
+                            foreach ($nastedFields as $field) {
+                                $from = $from->$field;
+                            }
+                            $item->{$key} = $from;
+                            break;
+                        case 'link':
+                            $item->{$key.'_url'} = $this->makeUrl($props['url'], $item);
+                            break;
+                        case 'actions':
+                            $actions = [];
+                            foreach ($props['actions'] as $action) {
+                                $actions[] = [
+                                    'element' => $action['element'],
+                                    'url' => $this->makeUrl($action['url'], $item),
+                                ];
+                                $item->{$key} = $actions;
+                            }
+                            break;
+                        default:
+                    }
+                }
+            }
+        }
+        return $query;
+    }
+
+    /**
+     * Make url
+     * 
+     * @param string $url
+     * @param $item
+     */
+    private function makeUrl(string $url, $item)
+    {
+        preg_match_all('/\{.*?\}/', $url, $matches);
+
+        foreach ($matches[0] as $match) {
+            preg_match('/\{([^\]]*)\}/', $match, $field);
+            $url = str_replace($match, $item->{$field[1]}, $url);
+        }
+        
+        return $url;
     }
 }
