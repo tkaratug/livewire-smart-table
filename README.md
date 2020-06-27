@@ -87,10 +87,10 @@ Then in `users.blade.php` use Livewire tag and give users to `query` attribute.
 
 ## Column Properties
 ### ```string```
-If you want to show a data in your table as string, you must use `string` as type.
+It is used for showing data as string in HTML table.
 
 ### ```link```
-It is used for showing a data as a link in HTML table. 
+It is used for showing data as link in HTML table. 
 
 In addition to type, you must define a `url` to redirect when clicked.
 ```php
@@ -105,23 +105,23 @@ $columns = [
 
 It is also possible to give parameters to the URL. All you need to do is give the column name containing the data you want to pass to the url in curly braces.
 
-Let's say you have a database table contains blog posts and each post has a slug. To show post titles in html table as a link to detail page, you need to define column as follows:
+Let's say you have a database table contains blog posts and each post has a slug. To show post titles in html table as a link, you need to define column as follows:
 ```php
 'title' => [
     'type' => 'link',
     'url' => 'http://example.com/posts/{slug}',
 ];
 ```
-It finds the `slug` field of current record and gives it to the url.
+The component is smart enough to find the `slug` field of current record and give it to the url.
 
 ### ```json```
-It is used for showing a data from json columns. If you have a json column in your database table, you can show a value from it in html table.
+It is used for showing data from json columns. If you have a json column in your database table, you can show values from it in html table.
 
 Let's say you have a json column named `contact` in your database table and contains address details in it.
 
 `{"address":{"country":"Turkey","city":"Istanbul","state":"Besiktas"}}`
 
-To show city in the html table, you need to define column as follows:
+To show just the city in html table, you need to define column as follows:
 ```php
 'city' => [
     'type' => 'json',
