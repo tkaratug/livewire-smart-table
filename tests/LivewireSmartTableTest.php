@@ -53,7 +53,10 @@ class LivewireSmartTableTest extends TestCase
 
         Livewire::test(LivewireSmartTable::class, ['query' => $data])
             ->set('columns', $columns)
-            ->assertSet('columns', $columns);
+            ->assertSet('columns', $columns)
+            ->assertSee($data->first()->firstname)
+            ->set('page', 2)
+            ->assertSee($data->last()->firstname);
     }
 
     /**
@@ -63,7 +66,7 @@ class LivewireSmartTableTest extends TestCase
      */
     private function prepareData()
     {
-        for ($i = 1; $i <= 5; $i++) {
+        for ($i = 1; $i <= 20; $i++) {
             Dummy::create([
                 'firstname' => $this->faker->firstName,
                 'lastname' => $this->faker->lastName,
