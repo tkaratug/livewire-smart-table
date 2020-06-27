@@ -19,58 +19,43 @@ It also uses Bootstrap (https://getbootstrap.com/) for base styling.
 Please make sure you include both of these dependencies before using this component.
 
 ## Usage
-In order to use this component, you must create a new Livewire component that extends from LivewireSmartTable
+In order to use this component, you must create a new Livewire component that extends from `LivewireSmartTable`
 
-You can use make:livewire to create a new component. For example.
+You can use `make:livewire` to create a new component. For example.
 
 ```
 php artisan make:livewire UserList
 ```
 
-In the UserList class, instead of extending from the base Livewire Component class, extend from LivewireSmartTable class. Also, remove the render method. You'll have a class similar to this snippet. You must give columns to view in the table.
+In the `UserList` class, instead of extending from the base Livewire Component class, extend from `LivewireSmartTable` class.
+Also, remove the render method. You'll have a class similar to this snippet. 
+
+In this class, you must define columns that you want to show in a table.
 
 ```php
 class UserList extends LivewireSmartTable
 {
     $columns = [
         'id' => [
-            'name' => 'Id',
-            'type' => 'string',
-            'class' => 'text-danger',
+            'type' => 'string', // column type
+            'name' => 'Id', // column header
+            'class' => 'text-danger', // column class
         ],
         'name' => [
-            'name' => 'Name',
             'type' => 'string',
+            'name' => 'Name',
         ],
         'email' => [
-            'name' => 'E-Mail',
             'type' => 'string',
-        ],
-        'city' => [
-            'name' => 'City',
-            'type' => 'json',
-            'from' => 'address',
-            'value' => 'city',
-        ],
-        'actions' => [
-            'name' => 'Actions',
-            'type' => 'actions',
-            'actions' => [
-                [
-                    'element' => '<button class="btn btn-sm btn-primary">View</button>',
-                    'url' => 'http://example.com/users/{id}/details',
-                ],
-                [
-                    'element' => '<button class="btn btn-sm btn-warning">Edit</button>',
-                    'url' => 'http://example.com/users/{id}/edit',
-                ],
-            ],
+            'name' => 'E-Mail',
         ],
     ];
 }
 ```
 
-To render the component in a view, just use the Livewire tag or include syntax
+Keys of columns array must be the same as column names in database table or key of a json object.
+
+To render the component in a view, just use the Livewire tag or include syntax.
 
 ```blade
 <livewire:user-list
@@ -79,15 +64,95 @@ To render the component in a view, just use the Livewire tag or include syntax
 />
 ```
 
+`$query` must be instance of an **Eloquent Collection**.
+
+For example, create a `UserController` class, select users to show in a table and pass them to a view file.
+
+````php
+class UserController extends Controller
+{
+    public function index()
+    {
+        $users = App\User::where('is_active', '=', true)->get();
+
+        return view('users', ['users' => $users]);
+    }
+}
+````
+
+Then in `users.blade.php` use Livewire tag and give users to `query` attribute.
+```
+<livewire:user-list :query="$users" />
+```
+
 ## Column Properties
 ### ```string```
-Document will be added.
+If you want to show a data in your table as string, you must use `string` as type.
+
 ### ```link```
-Document will be added.
+It is used for showing a data as a link in HTML table. 
+
+In addition to type, you must define a `url` to redirect when clicked.
+```php
+$columns = [
+    'profile' => [
+        'type' => 'link',
+        'url' => 'http://example.com/users/{id}/profile',
+        'target' => '_blank'
+    ],
+];
+```
+
+It is also possible to give parameters to the URL. All you need to do is give the column name containing the data you want to pass to the url in curly braces.
+
+Let's say you have a database table contains blog posts and each post has a slug. To show post titles in html table as a link to detail page, you need to define column as follows:
+```php
+'title' => [
+    'type' => 'link',
+    'url' => 'http://example.com/posts/{slug}',
+];
+```
+It finds the `slug` field of current record and gives it to the url.
+
 ### ```json```
-Document will be added.
+It is used for showing a data from json columns. If you have a json column in your database table, you can show a value from it in html table.
+
+Let's say you have a json column named `contact` in your database table and contains address details in it.
+
+`{"address":{"country":"Turkey","city":"Istanbul","state":"Besiktas"}}`
+
+To show city in the html table, you need to define column as follows:
+```php
+'city' => [
+    'type' => 'json',
+    'name' => 'City', // Text for column header
+    'from' => 'contact', // field that contains json data in a db table
+    'value' => 'address.city' // nested json value
+];
+```
+It will find the json data from `contact` column, and take city value inside address key then show it on the table.
+
 ### ```actions```
-Document will be added.
+It is used for showing action links for each row in html table. 
+
+You need to give `element` and `url` keys for the html element of the link and url to redirect.
+
+```php
+'actions' => [
+    'type' => 'actions',
+    'name' => 'Actions', // Text for column header
+    'actions' => [
+        [
+            'element' => '<button>View</button>',
+            'url' => 'http://example.com/users/{id}/profile'
+        ],
+        [
+            'element' => '<button>Edit</button>',
+            'url' => 'http://example.com/users/{id}/edit'
+        ],
+    ]
+];
+```
 
 ## Testing
 
