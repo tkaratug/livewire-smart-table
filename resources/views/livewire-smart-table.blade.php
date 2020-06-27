@@ -1,6 +1,6 @@
 <div>
     @if ($data->isEmpty())
-        <div class="alert alert-outline-warning">There is no submission for this form.</div>
+        <div class="alert alert-outline-warning">Not found any data.</div>
     @else
     <div class="row mb-4">
         <div class="col form-inline">

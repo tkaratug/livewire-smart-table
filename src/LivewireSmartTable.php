@@ -25,7 +25,7 @@ class LivewireSmartTable extends Component
 
     public $columns = [];
 
-    public $tableClass;
+    public $tableClass = 'table';
 
     public $sortIcon = '&#8597;';
 
@@ -33,12 +33,9 @@ class LivewireSmartTable extends Component
 
     public $sortDescIcon = '&#8595;';
 
-    public function mount(
-        Collection $query,
-        string $tableClass = 'table')
+    public function mount(Collection $query)
     {
         $this->query = $query;
-        $this->tableClass = $tableClass;
         $this->page = request()->query('page', $this->page);
     }
 
@@ -81,12 +78,12 @@ class LivewireSmartTable extends Component
             });
         }
 
-        // If the field that wanted to be sorted is from a json data
+        // Sort results
         $data = $this->sortAsc
             ? $items->sortBy($this->sortField)
             : $items->sortByDesc($this->sortField);
 
-        // Paginate the results
+        // Paginate results
         $data = new LengthAwarePaginator(
             $data->forPage($this->page, $this->perPage),
             $data->count(),
@@ -103,7 +100,7 @@ class LivewireSmartTable extends Component
 
     /**
      * Prepare data by columns
-     * 
+     *
      * @param Collection $query
      * @return Collection
      */
@@ -115,8 +112,8 @@ class LivewireSmartTable extends Component
                     switch ($props['type']) {
                         case 'json':
                             $from = json_decode($item->{$props['from']});
-                            $nastedFields = explode('.', $props['value']);
-                            foreach ($nastedFields as $field) {
+                            $nestedFields = explode('.', $props['value']);
+                            foreach ($nestedFields as $field) {
                                 $from = $from->$field;
                             }
                             $item->{$key} = $from;
@@ -144,9 +141,10 @@ class LivewireSmartTable extends Component
 
     /**
      * Make url
-     * 
+     *
      * @param string $url
      * @param $item
+     * @return string|string[]
      */
     private function makeUrl(string $url, $item)
     {
@@ -156,7 +154,7 @@ class LivewireSmartTable extends Component
             preg_match('/\{([^\]]*)\}/', $match, $field);
             $url = str_replace($match, $item->{$field[1]}, $url);
         }
-        
+
         return $url;
     }
 }
