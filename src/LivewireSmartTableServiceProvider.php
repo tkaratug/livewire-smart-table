@@ -11,12 +11,7 @@ class LivewireSmartTableServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        /*
-         * Optional methods to load your package assets
-         */
-        // $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'livewire-smart-table');
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'livewire-smart-table');
-        // $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
@@ -27,16 +22,6 @@ class LivewireSmartTableServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__.'/../resources/views' => resource_path('views/vendor/livewire-smart-table'),
             ], 'livewire-smart-table-views');
-
-            // Publishing assets.
-            /*$this->publishes([
-                __DIR__.'/../resources/assets' => public_path('vendor/livewire-smart-table'),
-            ], 'assets');*/
-
-            // Publishing the translation files.
-            /*$this->publishes([
-                __DIR__.'/../resources/lang' => resource_path('lang/vendor/livewire-smart-table'),
-            ], 'lang');*/
         }
     }
 

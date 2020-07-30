@@ -58,10 +58,7 @@ Keys of columns array must be the same as column names in database table or key 
 To render the component in a view, just use the Livewire tag or include syntax.
 
 ```blade
-<livewire:user-list
-   :query="$query" // required
-   table-class="class for the table" // optional
-/>
+<livewire:user-list :query="$query" />
 ```
 
 `$query` must be instance of an **Eloquent Collection**.
@@ -152,6 +149,15 @@ You need to give `element` and `url` keys for the html element of the link and u
         ],
     ]
 ];
+```
+
+## Publishing Views
+You can also publish the view files to customize them.
+
+All you need to do is running the following command. Then the views will be copied into `/resources/views/vendor/livewire-smart-table` directory.
+
+```bash
+php artisan vendor:publish --tag=livewire-smart-table-views
 ```
 
 ## Testing
