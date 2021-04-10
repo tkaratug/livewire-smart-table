@@ -111,10 +111,12 @@ class LivewireSmartTable extends Component
                 if (isset($props['type'])) {
                     switch ($props['type']) {
                         case 'json':
-                            $from = json_decode($item->{$props['from']});
+                            $from = $item->hasCast($props['from'], ['array'])
+                                ? $item->{$props['from']}
+                                : json_decode($item->{$props['from']}, true);
                             $nestedFields = explode('.', $props['value']);
                             foreach ($nestedFields as $field) {
-                                $from = $from->$field;
+                                $from = $from[$field] ?? null;
                             }
                             $item->{$key} = $from;
                             break;
