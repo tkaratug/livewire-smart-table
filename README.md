@@ -14,7 +14,7 @@ composer require tkaratug/livewire-smart-table
 ## Requirements
 This package uses livewire/livewire (https://laravel-livewire.com/) under the hood.
 
-It also uses Bootstrap (https://getbootstrap.com/) for base styling.
+It also uses Tailwind (https://tailwindcss.com) for base styling.
 
 Please make sure you include both of these dependencies before using this component.
 
