@@ -2,6 +2,11 @@
 
 All notable changes to `livewire-smart-table` will be documented in this file
 
+## 1.4.0 - 2022-02-25
+- Laravel 9.x support added.
+- PHP 7.4, 8.0 and 8.1 support added.
+- PHP 7.1 support removed.
+
 ## 1.3.0 - 2021-04-10
 - Laravel 8.x support added.
 - Livewire 2.x support added.

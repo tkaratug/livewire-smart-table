@@ -2,8 +2,10 @@
 
 namespace Tkaratug\LivewireSmartTable;
 
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\View\View;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -11,27 +13,27 @@ class LivewireSmartTable extends Component
 {
     use WithPagination;
 
-    public $query;
+    public Collection $query;
 
-    public $search = '';
+    public string $search = '';
 
     public $page = 1;
 
-    public $perPage = 10;
+    public int $perPage = 10;
 
-    public $sortField = 'id';
+    public string $sortField = 'id';
 
-    public $sortAsc = true;
+    public bool $sortAsc = true;
 
-    public $columns = [];
+    public array $columns = [];
 
-    public $tableClass = 'table';
+    public string $tableClass = 'table';
 
-    public $sortIcon = '&#8597;';
+    public string $sortIcon = '&#8597;';
 
-    public $sortAscIcon = '&#8593;';
+    public string $sortAscIcon = '&#8593;';
 
-    public $sortDescIcon = '&#8595;';
+    public string $sortDescIcon = '&#8595;';
 
     public function mount(Collection $query)
     {
@@ -57,7 +59,7 @@ class LivewireSmartTable extends Component
     /**
      * Render
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return Factory|View
      */
     public function render()
     {
@@ -93,7 +95,7 @@ class LivewireSmartTable extends Component
         );
 
         return view('livewire-smart-table::livewire-smart-table', [
-            'data' => $data,
+            'data'    => $data,
             'columns' => $this->columns,
         ]);
     }
@@ -104,7 +106,7 @@ class LivewireSmartTable extends Component
      * @param Collection $query
      * @return Collection
      */
-    private function prepareData(Collection $query)
+    private function prepareData(Collection $query): Collection
     {
         foreach ($query as $item) {
             foreach ($this->columns as $key => $props) {
@@ -146,9 +148,9 @@ class LivewireSmartTable extends Component
      *
      * @param string $url
      * @param $item
-     * @return string|string[]
+     * @return string
      */
-    private function makeUrl(string $url, $item)
+    private function makeUrl(string $url, $item): string
     {
         preg_match_all('/\{.*?\}/', $url, $matches);
 
