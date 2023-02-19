@@ -35,7 +35,7 @@ class LivewireSmartTable extends Component
 
     public string $sortDescIcon = '&#8595;';
 
-    public function mount(Collection $query)
+    public function mount(Collection $query): void
     {
         $this->query = $query;
         $this->page = request()->query('page', $this->page);
@@ -103,8 +103,9 @@ class LivewireSmartTable extends Component
     /**
      * Prepare data by columns
      *
-     * @param Collection $query
+     * @param  Collection  $query
      * @return Collection
+     * @throws \JsonException
      */
     private function prepareData(Collection $query): Collection
     {
@@ -115,7 +116,7 @@ class LivewireSmartTable extends Component
                         case 'json':
                             $from = $item->hasCast($props['from'], ['array'])
                                 ? $item->{$props['from']}
-                                : json_decode($item->{$props['from']}, true);
+                                : json_decode($item->{$props['from']}, true, 512, JSON_THROW_ON_ERROR);
                             $nestedFields = explode('.', $props['value']);
                             foreach ($nestedFields as $field) {
                                 $from = $from[$field] ?? null;
